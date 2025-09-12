@@ -1,6 +1,9 @@
 pipeline {
   agent any
   stages {
+
+    //Test 
+    
     stage('Build') {
       steps {
         echo 'Stage 1: Build - Build the code using a build automation tool to compile and package your code. You need to specify at least one build automation tool, e.g., Maven.'
