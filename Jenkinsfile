@@ -2,7 +2,11 @@ pipeline {
   agent any
   stages {
 
-    echo'Auto-trigger test: Build #6 activated by new commit.'
+    stage('Pre-Build Check') {
+      steps {
+        echo 'Auto-trigger test: Build #6 activated by new commit.'
+      }
+    }
 
     stage('Build') {
       steps {
