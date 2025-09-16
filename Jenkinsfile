@@ -19,6 +19,16 @@ pipeline {
       steps {
         echo 'Stage 2: Unit and Integration Tests - Run unit tests to ensure the code functions as expected and run integration tests to ensure the different components of the application work together as expected. You need to specify test automation tools for this stage.'
       }
+      post {
+        always {
+          emailext(
+            to: 'vidhic1790@gmail.com',
+            subject: "Unit & Integration Tests Stage - ${currentBuild.currentResult}",
+            body: "The Unit & Integration Tests stage finished with status: ${currentBuild.currentResult}",
+            attachLog: true
+          )
+        }
+      }
     }
 
     stage('Code Analysis') {
@@ -30,6 +40,16 @@ pipeline {
     stage('Security Scan') {
       steps {
         echo 'Stage 4: Security Scan - Perform a security scan on the code using a tool to identify any vulnerabilities. Research and select a tool to scan your code.'
+      }
+      post {
+        always {
+          emailext(
+            to: 'vidhic1790@gmail.com',
+            subject: "Security Scan Stage - ${currentBuild.currentResult}",
+            body: "The Security Scan stage finished with status: ${currentBuild.currentResult}",
+            attachLog: true
+          )
+        }
       }
     }
 
@@ -55,14 +75,20 @@ pipeline {
 
   post {
     success {
-      mail to: 'vidhic1790@gmail.com',
-           subject: "Pipeline Success",
-           body: "The pipeline ran successfully."
+      emailext(
+        to: 'vidhic1790@gmail.com',
+        subject: "Pipeline Success",
+        body: "The pipeline ran successfully.",
+        attachLog: true
+      )
     }
     failure {
-      mail to: 'vidhic1790@gmail.com',
-           subject: "Pipeline Failed",
-           body: "The pipeline failed. Please check Jenkins for details."
+      emailext(
+        to: 'vidhic1790@gmail.com',
+        subject: "Pipeline Failed",
+        body: "The pipeline failed. Please check Jenkins for details.",
+        attachLog: true
+      )
     }
   }
 }
