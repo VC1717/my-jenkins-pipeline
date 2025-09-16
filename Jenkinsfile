@@ -35,7 +35,8 @@ pipeline {
                         mimeType: 'text/html',
                         to: 'vidhic1790@gmail.com',
                         attachLog: true,
-                        compressLog: true
+                        compressLog: true,
+                        replyTo: 'vidhic1790@gmail.com'
                     )
                 }
             }
@@ -69,7 +70,8 @@ pipeline {
                         mimeType: 'text/html',
                         to: 'vidhic1790@gmail.com',
                         attachLog: true,
-                        compressLog: true
+                        compressLog: true,
+                        replyTo: 'vidhic1790@gmail.com'
                     )
                 }
             }
@@ -93,7 +95,8 @@ pipeline {
                 mimeType: 'text/html',
                 to: 'vidhic1790@gmail.com',
                 attachLog: true,
-                compressLog: true
+                compressLog: true,
+                replyTo: 'vidhic1790@gmail.com'
             )
         }
     }
