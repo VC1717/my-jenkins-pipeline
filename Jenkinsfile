@@ -8,6 +8,23 @@ pipeline {
             }
         }
         
+        stage('Setup Environment') {
+            steps {
+                sh '''
+                # Check if npm exists, if not install it
+                if ! command -v npm &> /dev/null; then
+                    echo "npm not found, installing Node.js and npm..."
+                    apt update
+                    apt install -y curl
+                    curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+                    apt install -y nodejs
+                fi
+                node --version
+                npm --version
+                '''
+            }
+        }
+        
         stage('Install Dependencies') {
             steps {
                 sh 'npm install'
