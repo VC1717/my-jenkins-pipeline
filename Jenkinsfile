@@ -61,19 +61,3 @@ pipeline {
     }
   }
 }
-
-  } // end of stages
-
-  post {
-    success {
-      mail to: 'vidhic1790@gmail.com',
-           subject: "Pipeline Success",
-           body: "The pipeline ran successfully."
-    }
-    failure {
-      mail to: 'vidhic1790@gmail.com',
-           subject: "Pipeline Failed",
-           body: "The pipeline failed. Please check Jenkins for details."
-    }
-  }
-}
