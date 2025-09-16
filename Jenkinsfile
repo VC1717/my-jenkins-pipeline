@@ -2,7 +2,6 @@ pipeline {
   agent any
 
   stages {
-
     stage('Pre-Build Check') {
       steps {
         echo 'Auto-trigger test: Build #6 activated by new commit.'
@@ -21,12 +20,7 @@ pipeline {
       }
       post {
         always {
-          emailext(
-            to: 'vidhic1790@gmail.com',
-            subject: "Unit & Integration Tests Stage - ${currentBuild.currentResult}",
-            body: "The Unit & Integration Tests stage finished with status: ${currentBuild.currentResult}",
-            attachLog: true
-          )
+          emailext body: 'Status: $BUILD_STATUS', subject: 'Unit and Integration Tests Stage - $BUILD_STATUS', to: 'vidhic1790@gmail.com', attachLog: true
         }
       }
     }
@@ -43,12 +37,7 @@ pipeline {
       }
       post {
         always {
-          emailext(
-            to: 'vidhic1790@gmail.com',
-            subject: "Security Scan Stage - ${currentBuild.currentResult}",
-            body: "The Security Scan stage finished with status: ${currentBuild.currentResult}",
-            attachLog: true
-          )
+          emailext body: 'Status: $BUILD_STATUS', subject: 'Security Scan Stage - $BUILD_STATUS', to: 'vidhic1790@gmail.com', attachLog: true
         }
       }
     }
@@ -70,25 +59,21 @@ pipeline {
         echo 'Stage 7: Deploy to Production - Deploy the application to a production server (e.g., AWS EC2 instance).'
       }
     }
+  }
+}
 
   } // end of stages
 
   post {
     success {
-      emailext(
-        to: 'vidhic1790@gmail.com',
-        subject: "Pipeline Success",
-        body: "The pipeline ran successfully.",
-        attachLog: true
-      )
+      mail to: 'vidhic1790@gmail.com',
+           subject: "Pipeline Success",
+           body: "The pipeline ran successfully."
     }
     failure {
-      emailext(
-        to: 'vidhic1790@gmail.com',
-        subject: "Pipeline Failed",
-        body: "The pipeline failed. Please check Jenkins for details.",
-        attachLog: true
-      )
+      mail to: 'vidhic1790@gmail.com',
+           subject: "Pipeline Failed",
+           body: "The pipeline failed. Please check Jenkins for details."
     }
   }
 }
