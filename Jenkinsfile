@@ -1,40 +1,94 @@
 pipeline {
   agent any
+
   stages {
-    stage('Checkout') {
+
+    stage('Pre-Build Check') {
       steps {
-        git branch: 'main', url: 'https://github.com/VC1717/my-jenkins-pipeline.git'
+        echo 'Auto-trigger test: Build #6 activated by new commit.'
       }
     }
-    stage('Install Dependencies') {
+
+    stage('Build') {
       steps {
-        sh 'npm install'
+        echo 'Stage 1: Build - Build the code using a build automation tool to compile and package your code. You need to specify at least one build automation tool, e.g., Maven.'
       }
     }
-    stage('Run Tests') {
+
+    stage('Unit and Integration Tests') {
       steps {
-        sh 'npm test || true'
+        echo 'Stage 2: Unit and Integration Tests - Run unit tests to ensure the code functions as expected and run integration tests to ensure the different components of the application work together as expected. You need to specify test automation tools for this stage.'
       }
       post {
         always {
-          emailext body: 'Status: $BUILD_STATUS', subject: 'Run Tests Stage - $BUILD_STATUS', to: 'vidhic1790@gmail.com', attachLog: true
+          emailext(
+            to: 'vidhic1790@gmail.com',
+            subject: "Unit & Integration Tests Stage - ${currentBuild.currentResult}",
+            body: "The Unit & Integration Tests stage finished with status: ${currentBuild.currentResult}",
+            attachLog: true
+          )
         }
       }
     }
-    stage('Generate Coverage Report') {
+
+    stage('Code Analysis') {
       steps {
-        sh 'npm run coverage || true'
+        echo 'Stage 3: Code Analysis - Integrate a code analysis tool to analyse the code and ensure it meets industry standards. Research and select a tool to analyse your code using Jenkins'
       }
     }
-    stage('NPM Audit (Security Scan)') {
+
+    stage('Security Scan') {
       steps {
-        sh 'npm audit || true'
+        echo 'Stage 4: Security Scan - Perform a security scan on the code using a tool to identify any vulnerabilities. Research and select a tool to scan your code.'
       }
       post {
         always {
-          emailext body: 'Status: $BUILD_STATUS', subject: 'NPM Audit Stage - $BUILD_STATUS', to: 'vidhic1790@gmail.com', attachLog: true
+          emailext(
+            to: 'vidhic1790@gmail.com',
+            subject: "Security Scan Stage - ${currentBuild.currentResult}",
+            body: "The Security Scan stage finished with status: ${currentBuild.currentResult}",
+            attachLog: true
+          )
         }
       }
+    }
+
+    stage('Deploy to Staging') {
+      steps {
+        echo 'Stage 5: Deploy to Staging - Deploy the application to a staging server (e.g., AWS EC2 instance).'
+      }
+    }
+
+    stage('Integration Tests on Staging') {
+      steps {
+        echo 'Stage 6: Integration Tests on Staging - Run integration tests on the staging environment to ensure the application functions as expected in a production-like environment.'
+      }
+    }
+
+    stage('Deploy to Production') {
+      steps {
+        echo 'Stage 7: Deploy to Production - Deploy the application to a production server (e.g., AWS EC2 instance).'
+      }
+    }
+
+  } // end of stages
+
+  post {
+    success {
+      emailext(
+        to: 'vidhic1790@gmail.com',
+        subject: "Pipeline Success",
+        body: "The pipeline ran successfully.",
+        attachLog: true
+      )
+    }
+    failure {
+      emailext(
+        to: 'vidhic1790@gmail.com',
+        subject: "Pipeline Failed",
+        body: "The pipeline failed. Please check Jenkins for details.",
+        attachLog: true
+      )
     }
   }
 }
