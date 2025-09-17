@@ -57,7 +57,7 @@ pipeline {
     success {
       mail to: 'vidhic1790@gmail.com',
            subject: "Pipeline Success",
-           body: "The pipeline ran successfully."
+           body: "The pipeline ran successfully. The Security Scan stage finished with successfully."
     }
     failure {
       mail to: 'vidhic1790@gmail.com',
