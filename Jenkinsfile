@@ -1,119 +1,129 @@
 pipeline {
     agent any
-    
+
     stages {
-        stage('Checkout') {
+
+        stage('Pre-Build Check') {
             steps {
-                git branch: 'main', url: 'https://github.com/VC1717/my-jenkins-pipeline.git'
+                echo 'Stage 0: Pre-Build Check - Triggered by commit.'
             }
         }
-        
-        stage('Setup Environment') {
+
+        stage('Build') {
             steps {
-                sh '''
-                # Check if npm exists, if not install it
-                if ! command -v npm &> /dev/null; then
-                    echo "npm not found, installing Node.js and npm..."
-                    apt update
-                    apt install -y curl
-                    curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
-                    apt install -y nodejs
-                fi
-                node --version
-                npm --version
-                '''
+                echo 'Stage 1: Build - Using Maven to compile and package code.'
+                // Example: sh 'mvn clean package'
             }
         }
-        
-        stage('Install Dependencies') {
+
+        stage('Unit and Integration Tests') {
             steps {
-                sh 'npm install'
-            }
-        }
-        
-        stage('Run Tests') {
-            steps {
-                sh 'npm test || true' // Allows pipeline to continue despite test failures
+                echo 'Stage 2: Running Unit and Integration Tests with JUnit.'
+                // Example: sh 'mvn test'
             }
             post {
                 always {
-                    // Email notification after test stage
-                    emailext (
-                        subject: "Jenkins Pipeline - Test Stage ${currentBuild.currentResult}: ${env.JOB_NAME} - ${env.BUILD_NUMBER}",
-                        body: """
-                        <h2>Test Stage Completed</h2>
-                        <p><strong>Job:</strong> ${env.JOB_NAME}</p>
-                        <p><strong>Build Number:</strong> ${env.BUILD_NUMBER}</p>
-                        <p><strong>Status:</strong> ${currentBuild.currentResult}</p>
-                        <p><strong>Build URL:</strong> <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
-                        <p><strong>Stage:</strong> Run Tests</p>
-                        <p>Please find the build logs attached.</p>
-                        """,
-                        mimeType: 'text/html',
+                    emailext(
                         to: 'vidhic1790@gmail.com',
-                        attachLog: true,
-                        compressLog: true,
-                        replyTo: 'vidhic1790@gmail.com'
+                        subject: "Unit & Integration Tests Stage - ${currentBuild.currentResult}",
+                        body: """
+                        Hello Team,
+
+                        The *Unit & Integration Tests* stage has finished with status: ${currentBuild.currentResult}.
+                        Please find the logs attached.
+
+                        Regards,
+                        Jenkins Pipeline
+                        """,
+                        attachLog: true
                     )
                 }
             }
         }
-        
-        stage('Generate Coverage Report') {
+
+        stage('Code Analysis') {
             steps {
-                // Ensure coverage report exists
-                sh 'npm run coverage || true'
+                echo 'Stage 3: Code Analysis - Using SonarQube to analyze code quality.'
+                // Example: sh 'mvn sonar:sonar'
             }
         }
-        
-        stage('NPM Audit (Security Scan)') {
+
+        stage('Security Scan') {
             steps {
-                sh 'npm audit || true' // This will show known CVEs in the output
+                echo 'Stage 4: Security Scan - Using OWASP Dependency-Check to detect vulnerabilities.'
+                // Example: sh 'dependency-check.sh --scan . --format XML'
             }
             post {
                 always {
-                    // Email notification after security scan stage
-                    emailext (
-                        subject: "Jenkins Pipeline - Security Scan ${currentBuild.currentResult}: ${env.JOB_NAME} - ${env.BUILD_NUMBER}",
-                        body: """
-                        <h2>Security Scan Stage Completed</h2>
-                        <p><strong>Job:</strong> ${env.JOB_NAME}</p>
-                        <p><strong>Build Number:</strong> ${env.BUILD_NUMBER}</p>
-                        <p><strong>Status:</strong> ${currentBuild.currentResult}</p>
-                        <p><strong>Build URL:</strong> <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
-                        <p><strong>Stage:</strong> NPM Audit (Security Scan)</p>
-                        <p>The security scan has been completed. Please review the attached logs for any vulnerabilities found.</p>
-                        """,
-                        mimeType: 'text/html',
+                    emailext(
                         to: 'vidhic1790@gmail.com',
-                        attachLog: true,
-                        compressLog: true,
-                        replyTo: 'vidhic1790@gmail.com'
+                        subject: "Security Scan Stage - ${currentBuild.currentResult}",
+                        body: """
+                        Hello Team,
+
+                        The *Security Scan* stage has finished with status: ${currentBuild.currentResult}.
+                        Please find the logs attached.
+
+                        Regards,
+                        Jenkins Pipeline
+                        """,
+                        attachLog: true
                     )
                 }
+            }
+        }
+
+        stage('Deploy to Staging') {
+            steps {
+                echo 'Stage 5: Deploy to Staging - Deploying to AWS EC2.'
+                // Example: sh 'scp target/app.jar ec2-user@staging-server:/app/'
+            }
+        }
+
+        stage('Integration Tests on Staging') {
+            steps {
+                echo 'Stage 6: Running integration tests on Staging environment using Selenium.'
+                // Example: sh 'mvn verify -Pstaging'
+            }
+        }
+
+        stage('Deploy to Production') {
+            steps {
+                echo 'Stage 7: Deploy to Production - Deploying to AWS EC2.'
+                // Example: sh 'scp target/app.jar ec2-user@prod-server:/app/'
             }
         }
     }
-    
+
     post {
-        always {
-            // Final pipeline notification
-            emailext (
-                subject: "Jenkins Pipeline ${currentBuild.currentResult}: ${env.JOB_NAME} - ${env.BUILD_NUMBER}",
-                body: """
-                <h2>Pipeline Execution Complete</h2>
-                <p><strong>Job:</strong> ${env.JOB_NAME}</p>
-                <p><strong>Build Number:</strong> ${env.BUILD_NUMBER}</p>
-                <p><strong>Final Status:</strong> ${currentBuild.currentResult}</p>
-                <p><strong>Build URL:</strong> <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
-                <p><strong>Duration:</strong> ${currentBuild.durationString}</p>
-                <p>The complete pipeline has finished execution. Please find the full build logs attached.</p>
-                """,
-                mimeType: 'text/html',
+        success {
+            emailext(
                 to: 'vidhic1790@gmail.com',
-                attachLog: true,
-                compressLog: true,
-                replyTo: 'vidhic1790@gmail.com'
+                subject: "Pipeline Success - Build #${env.BUILD_NUMBER}",
+                body: """
+                Hello Team,
+
+                ✅ The Jenkins pipeline has completed successfully.
+
+                Regards,
+                Jenkins Pipeline
+                """,
+                attachLog: true
+            )
+        }
+        failure {
+            emailext(
+                to: 'vidhic1790@gmail.com',
+                subject: "Pipeline Failed - Build #${env.BUILD_NUMBER}",
+                body: """
+                Hello Team,
+
+                ❌ The Jenkins pipeline has failed. Please check Jenkins for details.
+
+                Regards,
+                Jenkins Pipeline
+                """,
+                attachLog: true
             )
         }
     }
