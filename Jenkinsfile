@@ -16,54 +16,47 @@ pipeline {
 
         stage('Unit and Integration Tests') {
             steps {
-                echo 'Stage 2: Run unit and integration tests.'
+                echo 'Stage 2: Unit and Integration Tests - Run unit tests to ensure the code functions as expected and run integration tests to ensure the different components of the application work together as expected.'
             }
         }
 
         stage('Code Analysis') {
             steps {
-                echo 'Stage 3: Perform code analysis.'
+                echo 'Stage 3: Code Analysis - Integrate a code analysis tool to analyse the code and ensure it meets industry standards.'
             }
         }
 
         stage('Security Scan') {
             steps {
-                echo 'Stage 4: Security scan for vulnerabilities.'
+                echo 'Stage 4: Security Scan - Perform a security scan on the code using a tool to identify any vulnerabilities.'
             }
         }
 
         stage('Deploy to Staging') {
             steps {
-                echo 'Stage 5: Deploy to staging.'
+                echo 'Stage 5: Deploy to Staging - Deploy the application to a staging server.'
             }
         }
 
         stage('Integration Tests on Staging') {
             steps {
-                echo 'Stage 6: Run integration tests on staging.'
+                echo 'Stage 6: Integration Tests on Staging - Run integration tests on the staging environment.'
             }
         }
 
         stage('Deploy to Production') {
             steps {
-                echo 'Stage 7: Deploy to production.'
+                echo 'Stage 7: Deploy to Production - Deploy the application to a production server.'
             }
         }
     }
 
     post {
-        success {
+        always {
+            // Send email with Jenkins console log attached
             emailext (
-                subject: "Build #${env.BUILD_NUMBER} SUCCESS",
-                body: "The pipeline finished successfully. Check console logs attached.",
-                to: 'vidhic1790@gmail.com',
-                attachLog: true
-            )
-        }
-        failure {
-            emailext (
-                subject: "Build #${env.BUILD_NUMBER} FAILED",
-                body: "The pipeline failed. Please check the attached logs.",
+                subject: "Build #${env.BUILD_NUMBER} - ${currentBuild.currentResult}",
+                body: "The pipeline finished with status: ${currentBuild.currentResult}. The Jenkins build log is attached.",
                 to: 'vidhic1790@gmail.com',
                 attachLog: true
             )
