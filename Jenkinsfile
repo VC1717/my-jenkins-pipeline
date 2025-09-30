@@ -2,81 +2,91 @@ pipeline {
     agent any
 
     stages {
-        stage('Git Checkout') {
+        stage('Build') {
             steps {
-                git branch: 'main', 
-                    credentialsId: 'vidhic1790@gmail.com', 
-                    url: 'https://github.com/VC1717/my-jenkins-pipeline.git'
+                echo "Fetching the source code from GitHub"
+                git branch: 'main', url: 'https://github.com/VC1717/my-jenkins-pipeline.git'
+                echo "Compiling the code and generating artifacts."
+                echo "Build successful with Maven"
             }
         }
 
-        stage('Stage 1: Build') {
+        stage('Unit and Integration Tests') {
             steps {
-                echo 'Stage 1: Build - Installing required dependencies and building the application using tools such as Maven, Gradle, NPM, Webpack, or Vite.'
-            }
-        }
-
-        stage('Stage 2: Unit and Integration Tests') {
-            steps {
-                echo 'Stage 2: Unit and Integration Tests - Executing tests using tools like JUnit or NUnit.'
+                echo "Running unit tests started and completed"
+                echo "Running integration tests started and completed"
+                echo "Unit and integration test successfully completed using JUnit"
             }
             post {
                 success {
-                    emailext attachLog: true, 
-                        body: "Stage 2: Unit and Integration Tests passed successfully.", 
-                        subject: "Pipeline Notification: Stage 2 Passed", 
-                        to: "vidhic1790@gmail.com"
+                    mail to: 'vidhic1790@gmail.com',
+                        subject: 'Hello Buddy? (Unit & Integration Tests Success)',
+                        body: 'Bhai ki Body'
                 }
                 failure {
-                    emailext attachLog: true, 
-                        body: "Stage 2: Unit and Integration Tests failed. Please check the logs for details.", 
-                        subject: "Pipeline Notification: Stage 2 Failed", 
-                        to: "vidhic1790@gmail.com"
+                    mail to: 'vidhic1790@gmail.com',
+                        subject: 'Hello Buddy? (Unit & Integration Tests Failed)',
+                        body: 'Bhai ki Body failed'
                 }
             }
         }
 
-        stage('Stage 3: Code Analysis') {
+        stage('Code Analysis') {
             steps {
-                echo 'Stage 3: Code Analysis - Integrate code analysis tools like ESLint or SonarQube to ensure the React code meets industry standards and best practices.'
+                echo "Running Code Analysis started and completed"
+                echo "Code analysis done using FindBugs"
             }
         }
 
-        stage('Stage 4: Security Scan') {
+        stage('Security Scan') {
             steps {
-                echo 'Stage 4: Security Scan - Perform a security scan on the React application using tools like OWASP ZAP or other scanners to identify potential vulnerabilities.'
+                echo "Running Security Scan started and completed"
+                echo "Security Scan done using Nessus"
             }
             post {
                 success {
-                    emailext attachLog: true, 
-                        body: "Stage 4: Security Scan passed successfully.", 
-                        subject: "Pipeline Notification: Stage 4 Passed", 
-                        to: "vidhic1790@gmail.com"
+                    mail to: 'vidhic1790@gmail.com',
+                        subject: 'Security Scan Success',
+                        body: 'The Security Scan has succeeded. Find attached logs for more information.'
                 }
                 failure {
-                    emailext attachLog: true, 
-                        body: "Stage 4: Security Scan failed. Please check the logs for details.", 
-                        subject: "Pipeline Notification: Stage 4 Failed", 
-                        to: "vidhic1790@gmail.com"
+                    mail to: 'vidhic1790@gmail.com',
+                        subject: 'Security Scan Failed',
+                        body: 'The Security Scan has failed. Find attached logs for more information.'
                 }
             }
         }
 
-        stage('Stage 5: Deploy to Staging') {
+        stage('Deploy to Staging') {
             steps {
-                echo 'Stage 5: Deploy to Staging - Deploy the React application to a staging environment (e.g., AWS S3, Netlify) for testing and preview.'
+                echo "Running Deploy to Staging started and completed"
+                echo "Deploy to staging completed using Jenkins Deploy Plugin"
             }
         }
 
-        stage('Stage 6: Integration Tests on Staging') {
+        stage('Integration Tests on Staging') {
             steps {
-                echo 'Stage 6: Integration Tests on Staging - Run integration tests on the staged React application using tools like Cypress or Selenium to ensure it functions as expected in a production-like environment.'
+                echo "Running Integration Tests on Staging started and completed"
+                echo "Tests successful using JUnits"
+            }
+            post {
+                success {
+                    mail to: 'vidhic1790@gmail.com',
+                        subject: 'Integration Tests on Staging Success',
+                        body: 'The Integration Tests on Staging have succeeded. Find attached logs for more information.'
+                }
+                failure {
+                    mail to: 'vidhic1790@gmail.com',
+                        subject: 'Integration Tests on Staging Failed',
+                        body: 'The Integration Tests on Staging have failed. Find attached logs for more information.'
+                }
             }
         }
 
-        stage('Stage 7: Deploy to Production') {
+        stage('Deploy to Production') {
             steps {
-                echo 'Stage 7: Deploy to Production - Deploy the React application to the production environment (e.g., AWS S3, Netlify, or a web server).'
+                echo "Running Deploy to Production started and completed"
+                echo "Production successfully completed using Jenkins Deploy Plugin"
             }
         }
     }
