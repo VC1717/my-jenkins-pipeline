@@ -1,6 +1,12 @@
 pipeline {
     agent any
     stages {
+        stage('Git Checkout') {
+            steps {
+                git branch: 'main', credentialsId: 'vidhic1790@gmail.com', url: 'https://github.com/VC1717/my-jenkins-pipeline.git'
+            }
+        }
+
         stage('Build') {
             steps {
                 script {
@@ -53,19 +59,19 @@ pipeline {
             steps {
                 script {
                     echo 'Deploying application to production using Ansible/Terraform...'
-                    echo 'Sending email notification using Jenkins Mailer plugin...'
-                    mail(
-                        subject: "Pipeline Notification: ${JOB_NAME} - Build #${BUILD_NUMBER}",
-                        body: "The pipeline has completed. Check details at: ${BUILD_URL}",
-                        to: 'vidhic1790@gmail.com'
-                    )
                 }
             }
         }
     }
+
     post {
         always {
-            echo 'Pipeline execution completed.'
+            emailext(
+                subject: "Pipeline Notification: ${JOB_NAME} - Build #${BUILD_NUMBER}",
+                body: "The pipeline has completed.",
+                to: 'vidhic1790@gmail.com',
+                attachLog: true
+            )
         }
     }
 }
