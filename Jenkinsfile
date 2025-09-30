@@ -68,70 +68,23 @@ pipeline {
     }
     
     post {
-        success {
-            script {
-                emailext(
-                    subject: "SUCCESS: ${JOB_NAME} - Build #${BUILD_NUMBER}",
-                    body: """
-                        <h2>Pipeline Execution Successful</h2>
-                        <p><strong>Job:</strong> ${JOB_NAME}</p>
-                        <p><strong>Build Number:</strong> ${BUILD_NUMBER}</p>
-                        <p><strong>Build Status:</strong> SUCCESS</p>
-                        <p><strong>Build URL:</strong> <a href="${BUILD_URL}">${BUILD_URL}</a></p>
-                        <hr>
-                        <p>All stages completed successfully. Console log is attached.</p>
-                    """,
-                    to: 'vidhic1790@gmail.com',
-                    mimeType: 'text/html',
-                    attachLog: true,
-                    compressLog: true,
-                    attachmentsPattern: '*/.log'
-                )
-            }
-        }
-        
-        failure {
-            script {
-                emailext(
-                    subject: "FAILURE: ${JOB_NAME} - Build #${BUILD_NUMBER}",
-                    body: """
-                        <h2>Pipeline Execution Failed</h2>
-                        <p><strong>Job:</strong> ${JOB_NAME}</p>
-                        <p><strong>Build Number:</strong> ${BUILD_NUMBER}</p>
-                        <p><strong>Build Status:</strong> FAILURE</p>
-                        <p><strong>Build URL:</strong> <a href="${BUILD_URL}">${BUILD_URL}</a></p>
-                        <hr>
-                        <p style="color: red;">The pipeline has failed. Console log is attached.</p>
-                    """,
-                    to: 'vidhic1790@gmail.com',
-                    mimeType: 'text/html',
-                    attachLog: true,
-                    compressLog: true,
-                    attachmentsPattern: '*/.log'
-                )
-            }
-        }
-        
         always {
-            script {
-                emailext(
-                    subject: "NOTIFICATION: ${JOB_NAME} - Build #${BUILD_NUMBER} - ${currentBuild.result}",
-                    body: """
-                        <h2>Pipeline Notification</h2>
-                        <p><strong>Job:</strong> ${JOB_NAME}</p>
-                        <p><strong>Build Number:</strong> ${BUILD_NUMBER}</p>
-                        <p><strong>Build Status:</strong> ${currentBuild.result}</p>
-                        <p><strong>Build URL:</strong> <a href="${BUILD_URL}">${BUILD_URL}</a></p>
-                        <hr>
-                        <p>The pipeline has completed. Console log is attached.</p>
-                    """,
-                    to: 'vidhic1790@gmail.com',
-                    mimeType: 'text/html',
-                    attachLog: true,
-                    compressLog: true,
-                    attachmentsPattern: '*/.log'
-                )
-            }
+            emailext(
+                subject: "Pipeline: ${JOB_NAME} - Build #${BUILD_NUMBER} - ${currentBuild.result}",
+                body: """
+                    <h2>Pipeline Execution Complete</h2>
+                    <p><strong>Job:</strong> ${JOB_NAME}</p>
+                    <p><strong>Build Number:</strong> ${BUILD_NUMBER}</p>
+                    <p><strong>Status:</strong> ${currentBuild.result}</p>
+                    <p><strong>Build URL:</strong> <a href="${BUILD_URL}">${BUILD_URL}</a></p>
+                    <hr>
+                    <p>Console log is attached to this email.</p>
+                """,
+                to: 'vidhic1790@gmail.com',
+                mimeType: 'text/html',
+                attachLog: true,
+                compressLog: true
+            )
         }
     }
 }
