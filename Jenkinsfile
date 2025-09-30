@@ -12,7 +12,7 @@ pipeline {
                 echo 'Stage 1: Build - Installing required dependencies and building the application using tools such as Maven, Gradle, NPM, Webpack, or Vite.'
             }
         }
-
+        
         stage('Stage 2: Unit and Integration Tests') {
             steps {
                 echo 'Stage 2: Unit and Integration Tests - Executing tests using tools like JUnit or NUnit.'
