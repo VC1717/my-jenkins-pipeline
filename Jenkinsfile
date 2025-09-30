@@ -53,19 +53,20 @@ pipeline {
             steps {
                 script {
                     echo 'Deploying application to production using Ansible/Terraform...'
-                    echo 'Sending email notification using Jenkins Mailer plugin...'
-                    mail(
-                        subject: "Pipeline Notification: ${JOB_NAME} - Build #${BUILD_NUMBER}",
-                        body: "The pipeline has completed.",
-                        to: 'vidhic1790@gmail.com'
-                        
-                    )
                 }
             }
         }
     }
+
     post {
         always {
+            // Send email using Email Extension Plugin with build log attached
+            emailext(
+                subject: "Pipeline Notification: ${JOB_NAME} - Build #${BUILD_NUMBER}",
+                body: "The pipeline has completed.",
+                to: 'vidhic1790@gmail.com',
+                attachLog: true
+            )
             echo 'Pipeline execution completed.'
         }
     }
