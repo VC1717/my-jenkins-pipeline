@@ -1,6 +1,6 @@
 pipeline {
     agent any
-    
+
     stages {
         stage('Git Checkout') {
             steps {
@@ -9,82 +9,75 @@ pipeline {
                     url: 'https://github.com/VC1717/my-jenkins-pipeline.git'
             }
         }
-        
-        stage('Build') {
+
+        stage('Stage 1: Build') {
             steps {
-                script {
-                    echo 'Building the application using Maven/Gradle/NPM...'
+                echo 'Stage 1: Build - Installing required dependencies and building the application using tools such as Maven, Gradle, NPM, Webpack, or Vite.'
+            }
+        }
+
+        stage('Stage 2: Unit and Integration Tests') {
+            steps {
+                echo 'Stage 2: Unit and Integration Tests - Executing tests using tools like JUnit or NUnit.'
+            }
+            post {
+                success {
+                    emailext attachLog: true, 
+                        body: "Stage 2: Unit and Integration Tests passed successfully.", 
+                        subject: "Pipeline Notification: Stage 2 Passed", 
+                        to: "vidhic1790@gmail.com"
+                }
+                failure {
+                    emailext attachLog: true, 
+                        body: "Stage 2: Unit and Integration Tests failed. Please check the logs for details.", 
+                        subject: "Pipeline Notification: Stage 2 Failed", 
+                        to: "vidhic1790@gmail.com"
                 }
             }
         }
-        
-        stage('Unit and Integration Tests') {
+
+        stage('Stage 3: Code Analysis') {
             steps {
-                script {
-                    echo 'Running tests using JUnit/TestNG/PyTest...'
+                echo 'Stage 3: Code Analysis - Integrate code analysis tools like ESLint or SonarQube to ensure the React code meets industry standards and best practices.'
+            }
+        }
+
+        stage('Stage 4: Security Scan') {
+            steps {
+                echo 'Stage 4: Security Scan - Perform a security scan on the React application using tools like OWASP ZAP or other scanners to identify potential vulnerabilities.'
+            }
+            post {
+                success {
+                    emailext attachLog: true, 
+                        body: "Stage 4: Security Scan passed successfully.", 
+                        subject: "Pipeline Notification: Stage 4 Passed", 
+                        to: "vidhic1790@gmail.com"
+                }
+                failure {
+                    emailext attachLog: true, 
+                        body: "Stage 4: Security Scan failed. Please check the logs for details.", 
+                        subject: "Pipeline Notification: Stage 4 Failed", 
+                        to: "vidhic1790@gmail.com"
                 }
             }
         }
-        
-        stage('Code Analysis') {
+
+        stage('Stage 5: Deploy to Staging') {
             steps {
-                script {
-                    echo 'Performing code analysis using SonarQube...'
-                }
+                echo 'Stage 5: Deploy to Staging - Deploy the React application to a staging environment (e.g., AWS S3, Netlify) for testing and preview.'
             }
         }
-        
-        stage('Security Scan') {
+
+        stage('Stage 6: Integration Tests on Staging') {
             steps {
-                script {
-                    echo 'Running security scan using Snyk/OWASP Dependency-Check...'
-                }
+                echo 'Stage 6: Integration Tests on Staging - Run integration tests on the staged React application using tools like Cypress or Selenium to ensure it functions as expected in a production-like environment.'
             }
         }
-        
-        stage('Deploy to Staging') {
+
+        stage('Stage 7: Deploy to Production') {
             steps {
-                script {
-                    echo 'Deploying application to staging using Docker/Kubernetes...'
-                }
+                echo 'Stage 7: Deploy to Production - Deploy the React application to the production environment (e.g., AWS S3, Netlify, or a web server).'
             }
-        }
-        
-        stage('Integration Tests on Staging') {
-            steps {
-                script {
-                    echo 'Running integration tests using Selenium/Postman...'
-                }
-            }
-        }
-        
-        stage('Deploy to Production') {
-            steps {
-                script {
-                    echo 'Deploying application to production using Ansible/Terraform...'
-                }
-            }
-        }
-    }
-    
-    post {
-        always {
-            emailext(
-                subject: "Pipeline: ${JOB_NAME} - Build #${BUILD_NUMBER} - ${currentBuild.result}",
-                body: """
-                    <h2>Pipeline Execution Complete</h2>
-                    <p><strong>Job:</strong> ${JOB_NAME}</p>
-                    <p><strong>Build Number:</strong> ${BUILD_NUMBER}</p>
-                    <p><strong>Status:</strong> ${currentBuild.result}</p>
-                    <p><strong>Build URL:</strong> <a href="${BUILD_URL}">${BUILD_URL}</a></p>
-                    <hr>
-                    <p>Console log is attached to this email.</p>
-                """,
-                to: 'vidhic1790@gmail.com',
-                mimeType: 'text/html',
-                attachLog: true,
-                compressLog: true
-            )
         }
     }
 }
