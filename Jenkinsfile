@@ -59,15 +59,18 @@ pipeline {
     }
 
     post {
-        always {
-            // Send email using Email Extension Plugin with build log attached
+    always {
+        script {
+            // Capture console log as a string
+            def buildLog = currentBuild.rawBuild.getLog(100).join('\n')
+            
             emailext(
                 subject: "Pipeline Notification: ${JOB_NAME} - Build #${BUILD_NUMBER}",
-                body: "The pipeline has completed.",
-                to: 'vidhic1790@gmail.com',
-                attachLog: true
+                body: "The pipeline has completed. \n\nBuild Log:\n${buildLog}",
+                to: 'vidhic1790@gmail.com'
             )
-            echo 'Pipeline execution completed.'
+        }
+        echo 'Pipeline execution completed.'
         }
     }
 }
