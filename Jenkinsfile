@@ -4,19 +4,18 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building...'
-                sh 'echo "Build log example" > build.log'
             }
         }
     }
     post {
         always {
-            // Send email with log attachment
             emailext(
                 subject: "${currentBuild.fullDisplayName} - ${currentBuild.currentResult}",
-                body: "Please find the build log attached.",
-                recipientProviders: [[$class: 'DevelopersRecipientProvider']], // optional: for trigger-based recipients
+                body: "Build finished. Please find attached log.",
                 to: 'vidhic1790@gmail.com',
-                attachLog: true
+                attachLog: true,
+                mimeType: 'text/html'
+                // leave 'from' empty to use system SMTP credentials
             )
         }
     }
