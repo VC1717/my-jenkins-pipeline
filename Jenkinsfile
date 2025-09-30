@@ -1,6 +1,12 @@
 pipeline {
     agent any
     stages {
+        stage('Git Checkout') {
+            steps {
+                git branch: 'main', credentialsId: 'vidhic1790@gmail.com', url: 'https://github.com/VC1717/my-jenkins-pipeline.git'
+            }
+        }
+
         stage('Build') {
             steps {
                 script {
@@ -59,18 +65,15 @@ pipeline {
     }
 
     post {
-    always {
-        script {
-            // Capture console log as a string
-            def buildLog = currentBuild.rawBuild.getLog(100).join('\n')
-            
+        always {
+            // Sends an email with the full build log attached
             emailext(
                 subject: "Pipeline Notification: ${JOB_NAME} - Build #${BUILD_NUMBER}",
-                body: "The pipeline has completed. \n\nBuild Log:\n${buildLog}",
-                to: 'vidhic1790@gmail.com'
+                body: "The pipeline has completed.",
+                to: 'vidhic1790@gmail.com',
+                attachLog: true
             )
-        }
-        echo 'Pipeline execution completed.'
+            echo 'Pipeline execution completed and email sent with log attachment.'
         }
     }
 }
