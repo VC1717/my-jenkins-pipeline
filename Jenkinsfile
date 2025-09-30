@@ -66,15 +66,14 @@ pipeline {
 
     post {
         always {
-            script {
-                echo 'Sending Email notifications using Jenkins'
-                mail (
-                    subject: "Pipeline Notification: ${JOB_NAME} - Build #${BUILD_NUMBER}",
-                    body: "The pipeline has completed.",
-                    to: 'vidhic1790@gmail.com',
-                    attachLog: true
+            emailext(
+                subject: "Pipeline Notification: ${JOB_NAME} - Build #${BUILD_NUMBER}",
+                body: "The pipeline has completed.",
+                to: 'vidhic1790@gmail.com',
+                attachLog: true
             )
-            }
         }
+            
+        
     }
 }
